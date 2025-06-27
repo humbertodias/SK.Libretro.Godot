@@ -42,9 +42,8 @@ static std::string GenerateHex(const uint32_t len)
     if (!LoadFunction_(funcPtr, #funcPtr)) \
         return false; \
 
-Core::Core(Libretro* libretro, const std::string& path)
-: m_libretro(libretro)
-, m_path(path)
+Core::Core(const std::string& path)
+: m_path(path)
 {
 }
 
@@ -64,9 +63,16 @@ bool Core::Load()
     m_name = name;
 
     std::string extension = std::filesystem::path(m_path).extension().string();
-
-    std::filesystem::path temp_path = std::filesystem::path(m_libretro->GetTempDirectory()) / (name + GenerateHex(10) + extension);
-    std::filesystem::copy_file(m_path, temp_path, std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::skip_existing);
+    std::filesystem::path temp_path = std::filesystem::path(Libretro::GetInstance()->GetTempDirectory()) / (name + GenerateHex(10) + extension);
+    try
+    {
+        std::filesystem::copy_file(m_path, temp_path, std::filesystem::copy_options::overwrite_existing);
+    }
+    catch (const std::filesystem::filesystem_error& e)
+    {
+        LogError("Failed to copy core file: " + m_path + " to " + temp_path.string() + " - " + e.what());
+        return false;
+    }
     m_path = temp_path.string();
     std::replace(m_path.begin(), m_path.end(), '\\', '/');
 
@@ -119,7 +125,17 @@ void Core::Unload()
         m_handle = nullptr;
     }
 
-    m_libretro = nullptr;
+    if (std::filesystem::is_regular_file(m_path))
+    {
+        try
+        {
+            std::filesystem::remove(m_path);
+        }
+        catch (const std::filesystem::filesystem_error& e)
+        {
+            LogError("Failed to remove core file: " + m_path + " - " + e.what());
+        }
+    }
 }
 
 bool Core::LoadHandle()

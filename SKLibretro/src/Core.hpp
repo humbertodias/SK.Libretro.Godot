@@ -13,7 +13,7 @@ class Libretro;
 class Core
 {
 public:
-    Core(Libretro* libretro, const std::string& path);
+    Core(const std::string& path);
     ~Core() = default;
 
     bool Load();
@@ -51,7 +51,6 @@ public:
     decltype(&retro_get_memory_size) retro_get_memory_size_func                       = nullptr;
 
 private:
-    Libretro* m_libretro = nullptr;
     std::string m_name;
     std::string m_path;
     void* m_handle = nullptr;

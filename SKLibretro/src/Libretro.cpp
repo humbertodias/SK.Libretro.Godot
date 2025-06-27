@@ -3,7 +3,7 @@
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/input.hpp>
-#include <godot_cpp/classes/input_map.hpp>
+#include <godot_cpp/classes/input.hpp>
 #include <godot_cpp/classes/input_event_action.hpp>
 #include <godot_cpp/classes/input_event_mouse_motion.hpp>
 #include <godot_cpp/classes/input_event_mouse_button.hpp>
@@ -310,37 +310,6 @@ void Libretro::StopContent()
     StopEmulationThread(true);
 }
 
-const std::vector<String>& get_action_names()
-{
-    static std::vector<String> action_names = {
-        "RETRO_JOYPAD_B",
-        "RETRO_JOYPAD_Y",
-        "RETRO_JOYPAD_SELECT",
-        "RETRO_JOYPAD_START",
-        "RETRO_JOYPAD_UP",
-        "RETRO_JOYPAD_DOWN",
-        "RETRO_JOYPAD_LEFT",
-        "RETRO_JOYPAD_RIGHT",
-        "RETRO_JOYPAD_A",
-        "RETRO_JOYPAD_X",
-        "RETRO_JOYPAD_L",
-        "RETRO_JOYPAD_R",
-        "RETRO_JOYPAD_L2",
-        "RETRO_JOYPAD_R2",
-        "RETRO_JOYPAD_L3",
-        "RETRO_JOYPAD_R3",
-        "RETRO_JOYPAD_ANALOG_LEFT_X_POSITIVE",
-        "RETRO_JOYPAD_ANALOG_LEFT_X_NEGATIVE",
-        "RETRO_JOYPAD_ANALOG_LEFT_Y_POSITIVE",
-        "RETRO_JOYPAD_ANALOG_LEFT_Y_NEGATIVE",
-        "RETRO_JOYPAD_ANALOG_RIGHT_X_POSITIVE",
-        "RETRO_JOYPAD_ANALOG_RIGHT_X_NEGATIVE",
-        "RETRO_JOYPAD_ANALOG_RIGHT_Y_POSITIVE",
-        "RETRO_JOYPAD_ANALOG_RIGHT_Y_NEGATIVE"
-    };
-    return action_names;
-}
-
 void Libretro::_ready()
 {
     Node* parent = get_parent();
@@ -362,137 +331,12 @@ void Libretro::_input(const Ref<InputEvent>& event)
     if (!m_running)
         return;
 
-    Ref<InputEventKey> keyEvent = event;
-    if (keyEvent.is_valid())
-    {
-        auto input_map = InputMap::get_singleton();
-        for (const String& action : get_action_names())
-        {
-            if (input_map->event_is_action(event, action))
-            {
-                bool pressed = keyEvent->is_pressed();
-                if (action == "RETRO_JOYPAD_B")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_B);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_B);
-                }
-                else if (action == "RETRO_JOYPAD_Y")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_Y);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_Y);
-                }
-                else if (action == "RETRO_JOYPAD_SELECT")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_SELECT);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_SELECT);
-                }
-                else if (action == "RETRO_JOYPAD_START")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_START);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_START);
-                }
-                else if (action == "RETRO_JOYPAD_UP")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_UP);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_UP);
-                }
-                else if (action == "RETRO_JOYPAD_DOWN")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_DOWN);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_DOWN);
-                }
-                else if (action == "RETRO_JOYPAD_LEFT")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_LEFT);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_LEFT);
-                }
-                else if (action == "RETRO_JOYPAD_RIGHT")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_RIGHT);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_RIGHT);
-                }
-                else if (action == "RETRO_JOYPAD_A")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_A);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_A);
-                }
-                else if (action == "RETRO_JOYPAD_X")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_X);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_X);
-                }
-                else if (action == "RETRO_JOYPAD_L")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_L);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_L);
-                }
-                else if (action == "RETRO_JOYPAD_R")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_R);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_R);
-                }
-                else if (action == "RETRO_JOYPAD_L2")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_L2);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_L2);
-                }
-                else if (action == "RETRO_JOYPAD_R2")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_R2);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_R2);
-                }
-                else if (action == "RETRO_JOYPAD_L3")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_L3);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_L3);
-                }
-                else if (action == "RETRO_JOYPAD_R3")
-                {
-                    if (pressed)
-                        m_input->m_joypad_buttons[0] |= (1 << RETRO_DEVICE_ID_JOYPAD_R3);
-                    else
-                        m_input->m_joypad_buttons[0] &= ~(1 << RETRO_DEVICE_ID_JOYPAD_R3);
-                }
-            }
-        }
-    }
-
     Ref<InputEventMouseMotion> mouseMotion = event;
     if (mouseMotion.is_valid())
     {
         auto mouseMotionValue = mouseMotion->get_relative();
-        m_input->m_mouse_x[0] += ToShort(mouseMotionValue.x * 1.8f);
-        m_input->m_mouse_y[0] += ToShort(mouseMotionValue.y * 1.8f);
+        m_input->m_mouse_x[0] += ToShort(mouseMotionValue.x);
+        m_input->m_mouse_y[0] += ToShort(mouseMotionValue.y);
     }
 
     Ref<InputEventMouseButton> mouseButton = event;
@@ -563,6 +407,7 @@ void Libretro::_input(const Ref<InputEvent>& event)
         }
     }
 
+    Ref<InputEventKey> keyEvent = event;
     if (keyEvent.is_valid())
     {
         bool down             = keyEvent->is_pressed();
@@ -598,40 +443,78 @@ void Libretro::_process(double delta)
     while (m_main_thread_commands_queue.try_dequeue(command))
         command->Execute();
 
-    Vector2 left_vec;
-    Vector2 right_vec;
+    auto input = godot::Input::get_singleton();
 
-    auto input_map = godot::Input::get_singleton();
+    uint32_t joypad_buttons = 0;
 
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_LEFT_X_NEGATIVE"))
-        left_vec.x -= 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_LEFT_X_POSITIVE"))
-        left_vec.x += 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_LEFT_Y_POSITIVE"))
-        left_vec.y -= 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_LEFT_Y_NEGATIVE"))
-        left_vec.y += 1.0f;
+    if (input->is_action_pressed("RETRO_JOYPAD_B"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_B);
+    if (input->is_action_pressed("RETRO_JOYPAD_Y"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_Y);
+    if (input->is_action_pressed("RETRO_JOYPAD_SELECT"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_SELECT);
+    if (input->is_action_pressed("RETRO_JOYPAD_START"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_START);
+    if (input->is_action_pressed("RETRO_JOYPAD_UP"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_UP);
+    if (input->is_action_pressed("RETRO_JOYPAD_DOWN"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_DOWN);
+    if (input->is_action_pressed("RETRO_JOYPAD_LEFT"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_LEFT);
+    if (input->is_action_pressed("RETRO_JOYPAD_RIGHT"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_RIGHT);
+    if (input->is_action_pressed("RETRO_JOYPAD_A"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_A);
+    if (input->is_action_pressed("RETRO_JOYPAD_X"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_X);
+    if (input->is_action_pressed("RETRO_JOYPAD_L"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_L);
+    if (input->is_action_pressed("RETRO_JOYPAD_R"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_R);
+    if (input->is_action_pressed("RETRO_JOYPAD_L2"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_L2);
+    if (input->is_action_pressed("RETRO_JOYPAD_R2"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_R2);
+    if (input->is_action_pressed("RETRO_JOYPAD_L3"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_L3);
+    if (input->is_action_pressed("RETRO_JOYPAD_R3"))
+        joypad_buttons |= (1 << RETRO_DEVICE_ID_JOYPAD_R3);
 
-    if (left_vec.length() > 1.0f)
-        left_vec = left_vec.normalized();
+    m_input->m_joypad_buttons[0] = joypad_buttons;
 
-    m_input->m_analog_left_x[0] = static_cast<int16_t>(left_vec.x * 0x7fff);
-    m_input->m_analog_left_y[0] = static_cast<int16_t>(left_vec.y * 0x7fff);
+    Vector2 analog_left = {};
 
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_RIGHT_X_NEGATIVE"))
-        right_vec.x -= 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_RIGHT_X_POSITIVE"))
-        right_vec.x += 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_RIGHT_Y_POSITIVE"))
-        right_vec.y -= 1.0f;
-    if (input_map->is_action_pressed("RETRO_JOYPAD_ANALOG_RIGHT_Y_NEGATIVE"))
-        right_vec.y += 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_LEFT_X_NEGATIVE"))
+        analog_left.x -= 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_LEFT_X_POSITIVE"))
+        analog_left.x += 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_LEFT_Y_POSITIVE"))
+        analog_left.y -= 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_LEFT_Y_NEGATIVE"))
+        analog_left.y += 1.0f;
 
-    if (right_vec.length() > 1.0f)
-        right_vec = right_vec.normalized();
+    if (analog_left.length_squared() > 1.0f)
+        analog_left = analog_left.normalized();
 
-    m_input->m_analog_right_x[0] = static_cast<int16_t>(right_vec.x * 0x7fff);
-    m_input->m_analog_right_y[0] = static_cast<int16_t>(right_vec.y * 0x7fff);
+    m_input->m_analog_left_x[0] = ToShort(analog_left.x) * 0x7fff;
+    m_input->m_analog_left_y[0] = ToShort(analog_left.y) * 0x7fff;
+
+    Vector2 analog_right = {};
+
+    if (input->get_action_strength("RETRO_ANALOG_RIGHT_X_NEGATIVE"))
+        analog_right.x -= 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_RIGHT_X_POSITIVE"))
+        analog_right.x += 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_RIGHT_Y_POSITIVE"))
+        analog_right.y -= 1.0f;
+    if (input->get_action_strength("RETRO_ANALOG_RIGHT_Y_NEGATIVE"))
+        analog_right.y += 1.0f;
+
+    if (analog_right.length_squared() > 1.0f)
+        analog_right = analog_right.normalized();
+
+    m_input->m_analog_right_x[0] = ToShort(analog_right.x) * 0x7fff;
+    m_input->m_analog_right_y[0] = ToShort(analog_right.y) * 0x7fff;
 }
 
 void Libretro::DeInitGraphics()
@@ -704,7 +587,7 @@ void Libretro::StartEmulationThread(String root_directory, String core_name, Str
 
     String core_path = root_directory.path_join("cores").path_join(core_name + "_libretro.dll");
 
-    m_core = std::make_unique<Core>(this, core_path.utf8().get_data());
+    m_core = std::make_unique<Core>(core_path.utf8().get_data());
     m_environment = std::make_unique<Environment>();
     m_video = std::make_unique<Video>();
     m_audio = std::make_unique<Audio>();
@@ -750,6 +633,8 @@ void Libretro::StopEmulationThread(bool log)
     DeinitAudio();
 
     UnregisterInstance();
+
+    m_core->Unload();
 
     m_core = nullptr;
     m_environment = nullptr;
