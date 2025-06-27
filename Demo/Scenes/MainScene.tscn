@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh8x3sbal8nds"]
+
+[ext_resource type="Script" uid="uid://nno6l6rmt8dx" path="res://Scripts/runtime_model_import.gd" id="1_ibiss"]
+[ext_resource type="PackedScene" uid="uid://clejifnsfcmsn" path="res://Scenes/magic_deniro_80_hor.tscn" id="2_c6dvc"]
+[ext_resource type="PackedScene" uid="uid://bk4sixmi70ccf" path="res://Scenes/ui.tscn" id="3_nhkr4"]
+[ext_resource type="Script" uid="uid://bqeoe2amot06a" path="res://Scripts/UI.gd" id="5_y4jh7"]
+
+[node name="Root" type="Node2D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.979935, 0.199317, 0, -0.199317, 0.979935, -1, 1.26506, 0.606928)
+
+[node name="runtime_import" type="Node3D" parent="."]
+script = ExtResource("1_ibiss")
+
+[node name="magic-deniro-80-hor" parent="." instance=ExtResource("2_c6dvc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.47598, 1.85765, 1.53249)
+omni_range = 2.2381
+
+[node name="UIRoot" parent="." node_paths=PackedStringArray("game_node") instance=ExtResource("3_nhkr4")]
+script = ExtResource("5_y4jh7")
+game_node = NodePath("../magic-deniro-80-hor")
