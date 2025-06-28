@@ -60,6 +60,9 @@ static bool runloop_clear_all_thread_waits(uint32_t clear_threads, void* data)
     return true;
 }
 
+static void ProcessCoreOptions(Libretro* instance, const retro_core_option_definition* coreOptionsV2);
+static void ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2);
+
 Environment::Environment()
 {
     m_vfs_interface =
@@ -343,9 +346,9 @@ bool Environment::Callback(uint32_t cmd, void* data)
         auto systemAvInfo = static_cast<const retro_system_av_info*>(data);
 
         Log("[RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO] System AV Info: " + std::to_string(systemAvInfo->geometry.base_width) + "x" + std::to_string(systemAvInfo->geometry.base_height) +
-                   " @ " + std::to_string(systemAvInfo->geometry.max_width) + "x" + std::to_string(systemAvInfo->geometry.max_height) +
-                   " (aspect ratio: " + std::to_string(systemAvInfo->geometry.aspect_ratio) + ")" +
-                   "FPS: " + std::to_string(systemAvInfo->timing.fps) + " Sample Rate: " + std::to_string(systemAvInfo->timing.sample_rate));
+            " @ " + std::to_string(systemAvInfo->geometry.max_width) + "x" + std::to_string(systemAvInfo->geometry.max_height) +
+            " (aspect ratio: " + std::to_string(systemAvInfo->geometry.aspect_ratio) + ")" +
+            "FPS: " + std::to_string(systemAvInfo->timing.fps) + " Sample Rate: " + std::to_string(systemAvInfo->timing.sample_rate));
     }
     break;
     case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:
@@ -523,6 +526,7 @@ bool Environment::Callback(uint32_t cmd, void* data)
             return false;
 
         *static_cast<bool*>(data) = false;
+        return false;
     }
     break;
     case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:
@@ -544,11 +548,32 @@ bool Environment::Callback(uint32_t cmd, void* data)
     }
     break;
     case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:
-        LogWarning("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Environment Not Implemented");
-        return false;
+    {
+        if (!data)
+        {
+            Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Clearing options");
+            instance->m_environment->m_variables.clear();
+            return true;
+        }
+
+        instance->m_environment->m_variables.clear();
+        ProcessCoreOptions(instance, static_cast<const retro_core_option_definition*>(data));
+    }
+    break;
     case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:
-        LogWarning("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL] Environment Not Implemented");
-        return false;
+    {
+        if (!data)
+        {
+            Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL] Clearing options");
+            instance->m_environment->m_variables.clear();
+            return true;
+        }
+
+        instance->m_environment->m_variables.clear();
+        auto intl = static_cast<const retro_core_options_intl*>(data);
+        ProcessCoreOptions(instance, intl->local ? intl->local : intl->us);
+    }
+    break;
     case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY:
         // LogWarning("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY] Environment Not Implemented");
         return false;
@@ -642,8 +667,8 @@ bool Environment::Callback(uint32_t cmd, void* data)
             return true;
         }
 
-        auto coreOptionsV2 = static_cast<const retro_core_options_v2*>(data);
-        instance->m_environment->ProcessCoreOptionsV2(instance, coreOptionsV2);
+        instance->m_environment->m_variables.clear();
+        ProcessCoreOptionsV2(instance, static_cast<const retro_core_options_v2*>(data));
     }
     break;
     case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL:
@@ -655,13 +680,9 @@ bool Environment::Callback(uint32_t cmd, void* data)
             return true;
         }
 
-        auto coreOptionsV2Intl = static_cast<const retro_core_options_v2_intl*>(data);
-        retro_core_options_v2* coreOptionsV2 = nullptr;
-        if (coreOptionsV2Intl->local)
-            coreOptionsV2 = coreOptionsV2Intl->local;
-        else
-            coreOptionsV2 = coreOptionsV2Intl->us;
-        ProcessCoreOptionsV2(instance, coreOptionsV2);
+        instance->m_environment->m_variables.clear();
+        auto options = static_cast<const retro_core_options_v2_intl*>(data);
+        ProcessCoreOptionsV2(instance, options->local ? options->local : options->us);
     }
     break;
     case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK:
@@ -747,7 +768,38 @@ bool Environment::Callback(uint32_t cmd, void* data)
     return true;
 }
 
-void Environment::ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2)
+void ProcessCoreOptions(Libretro* instance, const retro_core_option_definition* defs)
+{
+    // if (coreOptionsV2->categories)
+    // {
+    //     for (retro_core_option_v2_category* cat = coreOptionsV2->categories; cat->key; ++cat)
+    //     {
+    //         Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Category - Key: " + std::string(cat->key) +
+    //             " Desc:" + std::string(cat->desc) +
+    //             " Info: " + std::string(cat->info ? cat->info : "explicit null"));
+    //     }
+    // }
+
+    for (const retro_core_option_definition* def = defs; def->key; ++def)
+    {
+        // Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Definition - Key: " + std::string(def->key) +
+        //     " Desc:" + std::string(def->desc) +
+        //     " Info: " + std::string(def->info ? def->info : "explicit null") +
+
+        // for (retro_core_option_value* value = def->values; value->value; ++value)
+        // {
+        //     Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Value - Value: " + std::string(value->value) +
+        //         " Label: " + std::string(value->label ? value->label : "explicit null"));
+        // }
+
+        // Log("[RETRO_ENVIRONMENT_SET_CORE_OPTIONS] Default Value: " + std::string(defs->default_value));
+
+        if (def->key && def->default_value)
+            instance->m_environment->m_variables[def->key] = def->default_value;
+    }
+}
+
+void ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2)
 {
     // if (coreOptionsV2->categories)
     // {

@@ -175,34 +175,34 @@ static retro_key GodotToLibretroKeycode(const Ref<InputEventKey>& keyEvent)
         case KEY_SCROLLLOCK: return RETROK_SCROLLOCK;
         case KEY_SHIFT:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LSHIFT;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RSHIFT;
         }
         break;
         case KEY_CTRL:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LCTRL;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RCTRL;
         }
         break;
         case KEY_ALT:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LALT;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RALT;
         }
         break;
         case KEY_META:
         {
             // NOTE: may need to return RETROK_LSUPER/RETK_RSUPER instead for some platforms
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LMETA;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RMETA;
         }
         break;
@@ -752,12 +752,9 @@ void Libretro::EmulationThreadLoop()
         m_condition_variable.wait(lock, [&]{ return m_mutex_done; });
     }
 
-    double frameDurationMs = 1000.0 / systemAvInfo.timing.fps;
-    auto lastTime = std::chrono::steady_clock::now();
-    double accumulator = 0.0;
-
     double frame_duration_ms = 1000.0 / systemAvInfo.timing.fps;
     auto last_time = std::chrono::steady_clock::now();
+    double accumulator = 0.0;
 
     while (m_running)
     {
@@ -766,21 +763,18 @@ void Libretro::EmulationThreadLoop()
 
         auto now = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double, std::milli>(now - last_time).count();
-
-        if (elapsed < frame_duration_ms)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(frame_duration_ms - elapsed)));
-            continue;
-        }
-
         last_time = now;
+        accumulator += elapsed;
 
-        if (m_audio->m_audio_buffer_status_callback)
-            m_audio->m_audio_buffer_status_callback(true, m_audio->m_audio_buffer_occupancy, m_audio->m_audio_buffer_occupancy <= 2);
+        while (accumulator >= frame_duration_ms)
+        {
+            if (m_audio->m_audio_buffer_status_callback)
+                m_audio->m_audio_buffer_status_callback(true, m_audio->m_audio_buffer_occupancy, m_audio->m_audio_buffer_occupancy <= 2);
 
-        m_core->retro_run_func();
-    }
-    
+            m_core->retro_run_func();
+            accumulator -= frame_duration_ms;
+        }
+    }    
     m_core->retro_unload_game_func();
     m_core->retro_deinit_func();
 
@@ -907,7 +901,7 @@ void Libretro::ThreadCommandCreateTexture::Execute()
     m_instance->m_new_material->set_texture(StandardMaterial3D::TEXTURE_EMISSION, m_instance->m_video->m_texture);
 }
 
-Libretro::ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Libretro* instance, godot::PackedByteArray pixelData, bool flipY)
+Libretro::ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Libretro* instance, PackedByteArray pixelData, bool flipY)
 : ThreadCommand(instance)
 , m_pixelData(pixelData)
 , m_flipY(flipY)
