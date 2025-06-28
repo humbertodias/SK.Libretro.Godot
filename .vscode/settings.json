@@ -82,8 +82,7 @@
         "rglgen.h": "c",
         "rglgen_headers.h": "c",
         "rglgen_private_headers.h": "c",
-        "ifaddrs.h": "c",
-        "vfs_implementation.h": "c"
+        "ifaddrs.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true,
     "godotTools.editorPath.godot4": "d:\\Godot\\Godot_v4.4.1-stable_win64.exe"

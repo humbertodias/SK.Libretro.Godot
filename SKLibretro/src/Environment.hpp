@@ -18,6 +18,8 @@ public:
 
     static bool Callback(uint32_t cmd, void* data);
     
+    static void ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2);
+
     static const uint32_t s_supported_vfs_version = 3;
 
     uint32_t m_rotation = 0;
