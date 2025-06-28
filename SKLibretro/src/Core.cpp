@@ -64,13 +64,9 @@ bool Core::Load()
 
     std::string extension = std::filesystem::path(m_path).extension().string();
     std::filesystem::path temp_path = std::filesystem::path(Libretro::GetInstance()->GetTempDirectory()) / (name + GenerateHex(10) + extension);
-    try
+    if (!std::filesystem::copy_file(m_path, temp_path, std::filesystem::copy_options::overwrite_existing))
     {
-        std::filesystem::copy_file(m_path, temp_path, std::filesystem::copy_options::overwrite_existing);
-    }
-    catch (const std::filesystem::filesystem_error& e)
-    {
-        LogError("Failed to copy core file: " + m_path + " to " + temp_path.string() + " - " + e.what());
+        LogError("Failed to copy core file: " + m_path + " to " + temp_path.string());
         return false;
     }
     m_path = temp_path.string();
@@ -126,16 +122,8 @@ void Core::Unload()
     }
 
     if (std::filesystem::is_regular_file(m_path))
-    {
-        try
-        {
-            std::filesystem::remove(m_path);
-        }
-        catch (const std::filesystem::filesystem_error& e)
-        {
-            LogError("Failed to remove core file: " + m_path + " - " + e.what());
-        }
-    }
+        if(!std::filesystem::remove(m_path))
+            LogError("Failed to remove core file: " + m_path);
 }
 
 bool Core::LoadHandle()

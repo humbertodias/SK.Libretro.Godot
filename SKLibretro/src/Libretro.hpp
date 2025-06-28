@@ -65,6 +65,8 @@ public:
 
         virtual void Execute() = 0;
 
+        bool m_pooled = false;
+
     protected:
         Libretro* m_instance;
     };
@@ -76,7 +78,7 @@ public:
         ~ThreadCommandInitAudio() override = default;
 
         void Execute() override;
-
+        
     private:
         float m_bufferCapacitySec;
         double m_sampleRate;
@@ -105,6 +107,7 @@ public:
         ~ThreadCommandUpdateTexture() override = default;
 
         void Execute() override;
+        void Reset(godot::PackedByteArray pixelData, bool flipY);
 
     private:
         godot::PackedByteArray m_pixelData;
@@ -118,6 +121,7 @@ public:
     static void UnregisterInstance();
 
     std::thread m_thread;
+    std::vector<std::unique_ptr<ThreadCommandUpdateTexture>> m_update_texture_command_pool;
     moodycamel::ReaderWriterQueue<std::unique_ptr<ThreadCommand>> m_main_thread_commands_queue;
     std::mutex m_mutex;
     bool m_mutex_done = false;
@@ -144,6 +148,9 @@ public:
     void EmulationThreadLoop();
     void CreateTexture(godot::Image::Format image_format, godot::PackedByteArray pixel_data, int32_t width, int32_t height, bool flip_y);
     void UpdateTexture(godot::PackedByteArray pixel_data, bool flip_y);
+
+    std::unique_ptr<ThreadCommandUpdateTexture> AcquireUpdateTextureCommand(godot::PackedByteArray pixel_data, bool flip_y);
+    void ReleaseUpdateTextureCommand(std::unique_ptr<ThreadCommand> cmd);
 
     static void LogInterfaceLog(retro_log_level level, const char* fmt, ...);
     static void LedInterfaceSetLedState(int32_t led, int32_t state);

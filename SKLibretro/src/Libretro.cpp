@@ -175,34 +175,34 @@ static retro_key GodotToLibretroKeycode(const Ref<InputEventKey>& keyEvent)
         case KEY_SCROLLLOCK: return RETROK_SCROLLOCK;
         case KEY_SHIFT:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LSHIFT;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RSHIFT;
         }
         break;
         case KEY_CTRL:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LCTRL;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RCTRL;
         }
         break;
         case KEY_ALT:
         {
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LALT;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RALT;
         }
         break;
         case KEY_META:
         {
             // NOTE: may need to return RETROK_LSUPER/RETK_RSUPER instead for some platforms
-            if (keyEvent->get_location() == godot::KEY_LOCATION_LEFT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_LEFT)
                 return RETROK_LMETA;
-            if (keyEvent->get_location() == godot::KEY_LOCATION_RIGHT)
+            if (keyEvent->get_location() == KeyLocation::KEY_LOCATION_RIGHT)
                 return RETROK_RMETA;
         }
         break;
@@ -441,7 +441,12 @@ void Libretro::_process(double delta)
 
     std::unique_ptr<ThreadCommand> command;
     while (m_main_thread_commands_queue.try_dequeue(command))
+    {
         command->Execute();
+
+        if (command->m_pooled)
+            ReleaseUpdateTextureCommand(std::move(command));
+    }
 
     auto input = godot::Input::get_singleton();
 
@@ -796,7 +801,24 @@ void Libretro::CreateTexture(Image::Format image_format, PackedByteArray pixel_d
 
 void Libretro::UpdateTexture(PackedByteArray pixel_data, bool flip_y)
 {
-    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandUpdateTexture>(this, pixel_data, flip_y));
+    m_main_thread_commands_queue.enqueue(AcquireUpdateTextureCommand(pixel_data, flip_y));
+}
+
+std::unique_ptr<Libretro::ThreadCommandUpdateTexture> Libretro::AcquireUpdateTextureCommand(PackedByteArray pixel_data, bool flip_y)
+{
+    if (!m_update_texture_command_pool.empty())
+    {
+        auto cmd = std::move(m_update_texture_command_pool.back());
+        m_update_texture_command_pool.pop_back();
+        cmd->Reset(pixel_data, flip_y);
+        return cmd;
+    }
+    return std::make_unique<ThreadCommandUpdateTexture>(this, pixel_data, flip_y);
+}
+
+void Libretro::ReleaseUpdateTextureCommand(std::unique_ptr<Libretro::ThreadCommand> cmd)
+{
+    m_update_texture_command_pool.push_back(std::unique_ptr<ThreadCommandUpdateTexture>(static_cast<ThreadCommandUpdateTexture*>(cmd.release())));
 }
 
 void Libretro::LogInterfaceLog(retro_log_level level, const char* fmt, ...)
@@ -907,11 +929,12 @@ void Libretro::ThreadCommandCreateTexture::Execute()
     m_instance->m_new_material->set_texture(StandardMaterial3D::TEXTURE_EMISSION, m_instance->m_video->m_texture);
 }
 
-Libretro::ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Libretro* instance, godot::PackedByteArray pixelData, bool flipY)
+Libretro::ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Libretro* instance, PackedByteArray pixelData, bool flipY)
 : ThreadCommand(instance)
 , m_pixelData(pixelData)
 , m_flipY(flipY)
 {
+    m_pooled = true;
 }
 
 void Libretro::ThreadCommandUpdateTexture::Execute()
@@ -925,5 +948,11 @@ void Libretro::ThreadCommandUpdateTexture::Execute()
 
     if (!m_instance->m_video->m_image->is_empty() && m_instance->m_video->m_texture.is_valid())
         m_instance->m_video->m_texture->update(m_instance->m_video->m_image);
+}
+
+void Libretro::ThreadCommandUpdateTexture::Reset(PackedByteArray pixelData, bool flipY)
+{
+    m_pixelData = pixelData;
+    m_flipY = flipY;
 }
 }
