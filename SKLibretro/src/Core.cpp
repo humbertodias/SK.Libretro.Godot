@@ -149,6 +149,9 @@ void Core::UnloadHandleNative()
 
 void* Core::LoadFunctionNative(const char* functionName)
 {
-    return SDL_LoadFunction(static_cast<SDL_SharedObject*>(m_handle), functionName);
+    // return SDL_LoadFunction(static_cast<SDL_SharedObject*>(m_handle), functionName);
+    return reinterpret_cast<void*>(
+        SDL_LoadFunction(static_cast<SDL_SharedObject*>(m_handle), functionName)
+    );
 }
 }
