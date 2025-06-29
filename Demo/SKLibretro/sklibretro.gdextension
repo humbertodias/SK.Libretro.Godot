@@ -6,5 +6,8 @@ reloadable = true
 
 [libraries]
 
-windows.debug.x86_64 = "SKLibretro.windows.template_debug.x86_64.dll"
-windows.release.x86_64 = "SKLibretro.windows.template_release.x86_64.dll"
+windows.debug.x86_64 = "sklibretro.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "sklibretro.windows.template_release.x86_64.dll"
+
+macos.debug.universal = "sklibretro.macos.template_debug.universal.dylib"
+macos.release.universal = "sklibretro.macos.template_release.universal.dylib"
