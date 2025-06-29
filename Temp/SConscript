@@ -15,14 +15,19 @@ env.Append(CPPPATH=[
     "SKLibretro/external/SDL3/include/"
 ])
 
-env.Append(LIBPATH=[r"SKLibretro/external/SDL3/lib/x64"])
+# Dynamic LIBPATH based on arch
+env.Append(LIBPATH=["SKLibretro/external/SDL3/lib/{}/{}".format(env["platform"],env["arch"])])
 
-env.Append(LIBS=["user32"])
-env.Append(LIBS=["gdi32"])
-env.Append(LIBS=["opengl32"])
-env.Append(LIBS=["SDL3"])
-
-env.Append(LINKFLAGS=['/IGNORE:4099'])
+# Platform-specific libraries
+if env["platform"] == "windows":
+    env.Append(LIBS=["user32", "gdi32", "opengl32", "SDL3"])
+    env.Append(LINKFLAGS=["/IGNORE:4099"])
+elif env["platform"] == "macos":
+    env.Append(LIBS=["SDL3"])
+    env.Append(LINKFLAGS=["-framework", "OpenGL"])
+    env.Replace(SHLIBPREFIX="")
+else:
+    env.Append(LIBS=["SDL3", "GL"])  # Linux
 
 sources = Glob("SKLibretro/src/*.cpp")
 sources.extend(Glob("SKLibretro/external/libretro-common/compat/*.c"))
@@ -35,6 +40,6 @@ sources.append("SKLibretro/external/libretro-common/gfx/scaler/pixconv.c")
 sources.append("SKLibretro/external/libretro-common/string/stdstring.c")
 sources.append("SKLibretro/external/libretro-common/vfs/vfs_implementation.c")
 
-library = env.SharedLibrary("../Demo/SKLibretro/SKLibretro.{}.{}.{}{}".format(env["platform"], env["target"], env["arch"], env["SHLIBSUFFIX"]), source=sources)
+library = env.SharedLibrary("../Demo/SKLibretro/sklibretro.{}.{}.{}{}".format(env["platform"], env["target"], env["arch"], env["SHLIBSUFFIX"]), source=sources)
 
 Default(library)
