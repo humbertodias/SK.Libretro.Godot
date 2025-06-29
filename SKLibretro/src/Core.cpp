@@ -69,6 +69,7 @@ bool Core::Load()
         LogError("Failed to copy core file: " + m_path + " to " + temp_path.string());
         return false;
     }
+
     m_path = temp_path.string();
     std::replace(m_path.begin(), m_path.end(), '\\', '/');
 
@@ -122,8 +123,8 @@ void Core::Unload()
     }
 
     if (std::filesystem::is_regular_file(m_path))
-        if(!std::filesystem::remove(m_path))
-            LogError("Failed to remove core file: " + m_path);
+        if (!std::filesystem::remove(m_path))
+            LogError("Core file not found for removal: " + m_path);
 }
 
 bool Core::LoadHandle()

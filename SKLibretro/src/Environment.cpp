@@ -60,8 +60,8 @@ static bool runloop_clear_all_thread_waits(uint32_t clear_threads, void* data)
     return true;
 }
 
-void ProcessCoreOptions(Libretro* instance, const retro_core_option_definition* coreOptionsV2);
-void ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2);
+static void ProcessCoreOptions(Libretro* instance, const retro_core_option_definition* coreOptionsV2);
+static void ProcessCoreOptionsV2(Libretro* instance, const retro_core_options_v2* coreOptionsV2);
 
 Environment::Environment()
 {
@@ -211,6 +211,8 @@ bool Environment::Callback(uint32_t cmd, void* data)
         if (!data)
             return false;
 
+        Log("[RETRO_ENVIRONMENT_SET_HW_RENDER] Setting hardware render callback...");
+
         auto hwRenderCallback = static_cast<retro_hw_render_callback*>(data);
         Log("[RETRO_ENVIRONMENT_SET_HW_RENDER] Context type: " + std::to_string(hwRenderCallback->context_type));
         if (hwRenderCallback->context_type != RETRO_HW_CONTEXT_OPENGL
@@ -230,6 +232,7 @@ bool Environment::Callback(uint32_t cmd, void* data)
     case RETRO_ENVIRONMENT_GET_VARIABLE:
     {
         auto variable = static_cast<retro_variable*>(data);
+        // Log("Getting variable: " + std::string(variable->key) + " = " + std::string(instance->m_environment->m_variables[variable->key]));
         variable->value = instance->m_environment->m_variables[variable->key].c_str();
     }
     break;
@@ -306,6 +309,9 @@ bool Environment::Callback(uint32_t cmd, void* data)
     case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:
         LogWarning("[RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE] Environment Not Implemented");
         return false;
+    // case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
+    //     LogWarning("[RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY] Environment Not Implemented");
+    //     return false;
     case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:
     {
         if (!std::filesystem::is_directory(instance->m_environment->m_core_assets_directory))

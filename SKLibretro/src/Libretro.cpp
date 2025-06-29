@@ -441,12 +441,7 @@ void Libretro::_process(double delta)
 
     std::unique_ptr<ThreadCommand> command;
     while (m_main_thread_commands_queue.try_dequeue(command))
-    {
         command->Execute();
-
-        if (command->m_pooled)
-            ReleaseUpdateTextureCommand(std::move(command));
-    }
 
     auto input = godot::Input::get_singleton();
 
@@ -757,12 +752,9 @@ void Libretro::EmulationThreadLoop()
         m_condition_variable.wait(lock, [&]{ return m_mutex_done; });
     }
 
-    double frameDurationMs = 1000.0 / systemAvInfo.timing.fps;
-    auto lastTime = std::chrono::steady_clock::now();
-    double accumulator = 0.0;
-
     double frame_duration_ms = 1000.0 / systemAvInfo.timing.fps;
     auto last_time = std::chrono::steady_clock::now();
+    double accumulator = 0.0;
 
     while (m_running)
     {
@@ -771,21 +763,18 @@ void Libretro::EmulationThreadLoop()
 
         auto now = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double, std::milli>(now - last_time).count();
-
-        if (elapsed < frame_duration_ms)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(frame_duration_ms - elapsed)));
-            continue;
-        }
-
         last_time = now;
+        accumulator += elapsed;
 
-        if (m_audio->m_audio_buffer_status_callback)
-            m_audio->m_audio_buffer_status_callback(true, m_audio->m_audio_buffer_occupancy, m_audio->m_audio_buffer_occupancy <= 2);
+        while (accumulator >= frame_duration_ms)
+        {
+            if (m_audio->m_audio_buffer_status_callback)
+                m_audio->m_audio_buffer_status_callback(true, m_audio->m_audio_buffer_occupancy, m_audio->m_audio_buffer_occupancy <= 2);
 
-        m_core->retro_run_func();
-    }
-    
+            m_core->retro_run_func();
+            accumulator -= frame_duration_ms;
+        }
+    }    
     m_core->retro_unload_game_func();
     m_core->retro_deinit_func();
 
@@ -801,24 +790,7 @@ void Libretro::CreateTexture(Image::Format image_format, PackedByteArray pixel_d
 
 void Libretro::UpdateTexture(PackedByteArray pixel_data, bool flip_y)
 {
-    m_main_thread_commands_queue.enqueue(AcquireUpdateTextureCommand(pixel_data, flip_y));
-}
-
-std::unique_ptr<Libretro::ThreadCommandUpdateTexture> Libretro::AcquireUpdateTextureCommand(PackedByteArray pixel_data, bool flip_y)
-{
-    if (!m_update_texture_command_pool.empty())
-    {
-        auto cmd = std::move(m_update_texture_command_pool.back());
-        m_update_texture_command_pool.pop_back();
-        cmd->Reset(pixel_data, flip_y);
-        return cmd;
-    }
-    return std::make_unique<ThreadCommandUpdateTexture>(this, pixel_data, flip_y);
-}
-
-void Libretro::ReleaseUpdateTextureCommand(std::unique_ptr<Libretro::ThreadCommand> cmd)
-{
-    m_update_texture_command_pool.push_back(std::unique_ptr<ThreadCommandUpdateTexture>(static_cast<ThreadCommandUpdateTexture*>(cmd.release())));
+    m_main_thread_commands_queue.enqueue(std::make_unique<ThreadCommandUpdateTexture>(this, pixel_data, flip_y));
 }
 
 void Libretro::LogInterfaceLog(retro_log_level level, const char* fmt, ...)
@@ -934,7 +906,6 @@ Libretro::ThreadCommandUpdateTexture::ThreadCommandUpdateTexture(Libretro* insta
 , m_pixelData(pixelData)
 , m_flipY(flipY)
 {
-    m_pooled = true;
 }
 
 void Libretro::ThreadCommandUpdateTexture::Execute()
@@ -948,11 +919,5 @@ void Libretro::ThreadCommandUpdateTexture::Execute()
 
     if (!m_instance->m_video->m_image->is_empty() && m_instance->m_video->m_texture.is_valid())
         m_instance->m_video->m_texture->update(m_instance->m_video->m_image);
-}
-
-void Libretro::ThreadCommandUpdateTexture::Reset(PackedByteArray pixelData, bool flipY)
-{
-    m_pixelData = pixelData;
-    m_flipY = flipY;
 }
 }
