@@ -15,6 +15,10 @@ run/main_scene="uid://bh8x3sbal8nds"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://Textures/icon.svg"
 
+[autoload]
+
+LibretroScene="*res://Scenes/libretro.tscn"
+
 [display]
 
 window/size/viewport_width=1920

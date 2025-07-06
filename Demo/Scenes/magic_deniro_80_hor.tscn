@@ -221,7 +221,3 @@ skeleton = NodePath("")
 transform = Transform3D(1, -6.60024e-15, 8.74228e-08, 0, 1, 7.54979e-08, -8.74228e-08, -7.54979e-08, 1, 0, 0, 0)
 mesh = SubResource("ArrayMesh_j6opf")
 skeleton = NodePath("")
-
-[node name="Libretro" type="Libretro" parent="denirosmagicmon"]
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="denirosmagicmon/Libretro"]
