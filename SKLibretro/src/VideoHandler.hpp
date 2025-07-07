@@ -33,6 +33,7 @@ public:
     bool SetPixelFormat(const retro_pixel_format* pixel_format);
     bool SetGeometry(const retro_game_geometry* geometry);
     bool SetHwRender(retro_hw_render_callback* hw_render_callback);
+    bool GetPreferredHwRender(retro_hw_context_type* hw_context_type) const;
 
 private:
     godot::Ref<godot::StandardMaterial3D> m_original_surface_material_override = nullptr;

@@ -20,7 +20,9 @@ public:
     void Init(float buffer_capacity_sec, double sample_rate);
     void DeInit();
 
-    void SetAudioBufferStatusCallback(retro_audio_buffer_status_callback_t callback);
+    bool SetAudioBufferStatusCallback(const retro_audio_buffer_status_callback* callback);
+    bool SetMinimumAudioLatency(const uint32_t* minimum_audio_latency);
+
     void CallAudioBufferStatusCallback();
 
 private:
@@ -32,5 +34,6 @@ private:
     uint32_t m_audio_buffer_total_frames = 0;
     uint32_t m_audio_buffer_occupancy = 0;
     retro_audio_buffer_status_callback_t m_audio_buffer_status_callback = nullptr;
+    uint32_t m_minimum_audio_latency = 0;
 };
 }

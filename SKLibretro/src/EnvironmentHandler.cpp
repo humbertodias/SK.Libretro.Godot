@@ -54,99 +54,110 @@ static void retro_perf_log()
 
 static bool runloop_clear_all_thread_waits(uint32_t clear_threads, void* data)
 {
-    if (clear_threads <= 0)
-        return true;
+    if (clear_threads > 0)
+    {
+        // start audio
+    }
+    else
+    {
+        // stop audio
+    }
 
     return true;
 }
+
+#define ENVIRONMENT_COMMANDS \
+    X(RETRO_ENVIRONMENT_EXPERIMENTAL) \
+    X(RETRO_ENVIRONMENT_PRIVATE) \
+    X(RETRO_ENVIRONMENT_SET_ROTATION) \
+    X(RETRO_ENVIRONMENT_GET_OVERSCAN) \
+    X(RETRO_ENVIRONMENT_GET_CAN_DUPE) \
+    X(RETRO_ENVIRONMENT_SET_MESSAGE) \
+    X(RETRO_ENVIRONMENT_SHUTDOWN) \
+    X(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL) \
+    X(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY) \
+    X(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT) \
+    X(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS) \
+    X(RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK) \
+    X(RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE) \
+    X(RETRO_ENVIRONMENT_SET_HW_RENDER) \
+    X(RETRO_ENVIRONMENT_GET_VARIABLE) \
+    X(RETRO_ENVIRONMENT_SET_VARIABLES) \
+    X(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE) \
+    X(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME) \
+    X(RETRO_ENVIRONMENT_GET_LIBRETRO_PATH) \
+    X(RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK) \
+    X(RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK) \
+    X(RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES) \
+    X(RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_LOG_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_PERF_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY) \
+    X(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY) \
+    X(RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO) \
+    X(RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK) \
+    X(RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO) \
+    X(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO) \
+    X(RETRO_ENVIRONMENT_SET_MEMORY_MAPS) \
+    X(RETRO_ENVIRONMENT_SET_GEOMETRY) \
+    X(RETRO_ENVIRONMENT_GET_USERNAME) \
+    X(RETRO_ENVIRONMENT_GET_LANGUAGE) \
+    X(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER) \
+    X(RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE) \
+    X(RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS) \
+    X(RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE) \
+    X(RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS) \
+    X(RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT) \
+    X(RETRO_ENVIRONMENT_GET_VFS_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_LED_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE) \
+    X(RETRO_ENVIRONMENT_GET_MIDI_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_FASTFORWARDING) \
+    X(RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE) \
+    X(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS) \
+    X(RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY) \
+    X(RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER) \
+    X(RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION) \
+    X(RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION) \
+    X(RETRO_ENVIRONMENT_SET_MESSAGE_EXT) \
+    X(RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS) \
+    X(RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK) \
+    X(RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY) \
+    X(RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE) \
+    X(RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE) \
+    X(RETRO_ENVIRONMENT_GET_GAME_INFO_EXT) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL) \
+    X(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK) \
+    X(RETRO_ENVIRONMENT_SET_VARIABLE) \
+    X(RETRO_ENVIRONMENT_GET_THROTTLE_STATE) \
+    X(RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT) \
+    X(RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT) \
+    X(RETRO_ENVIRONMENT_GET_JIT_CAPABLE) \
+    X(RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_DEVICE_POWER) \
+    X(RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE) \
+    X(RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY) \
+    X(RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY) \
+    X(RETRO_ENVIRONMENT_RETROARCH_START_BLOCK) \
+    X(RETRO_ENVIRONMENT_SET_SAVE_STATE_IN_BACKGROUND) \
+    X(RETRO_ENVIRONMENT_GET_CLEAR_ALL_THREAD_WAITS_CB) \
+    X(RETRO_ENVIRONMENT_POLL_TYPE_OVERRIDE)
 
 static std::string EnvironmentString(uint32_t cmd)
 {
     switch (cmd)
     {
-    case RETRO_ENVIRONMENT_EXPERIMENTAL:                                        return "RETRO_ENVIRONMENT_EXPERIMENTAL";
-    case RETRO_ENVIRONMENT_PRIVATE:                                             return "RETRO_ENVIRONMENT_PRIVATE";
-    case RETRO_ENVIRONMENT_SET_ROTATION:                                        return "RETRO_ENVIRONMENT_SET_ROTATION";
-    case RETRO_ENVIRONMENT_GET_OVERSCAN:                                        return "RETRO_ENVIRONMENT_GET_OVERSCAN";
-    case RETRO_ENVIRONMENT_GET_CAN_DUPE:                                        return "RETRO_ENVIRONMENT_GET_CAN_DUPE";
-    case RETRO_ENVIRONMENT_SET_MESSAGE:                                         return "RETRO_ENVIRONMENT_SET_MESSAGE";
-    case RETRO_ENVIRONMENT_SHUTDOWN:                                            return "RETRO_ENVIRONMENT_SHUTDOWN";
-    case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:                               return "RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL";
-    case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:                                return "RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY";
-    case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:                                    return "RETRO_ENVIRONMENT_SET_PIXEL_FORMAT";
-    case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:                               return "RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS";
-    case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:                               return "RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK";
-    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:                          return "RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE";
-    case RETRO_ENVIRONMENT_SET_HW_RENDER:                                       return "RETRO_ENVIRONMENT_SET_HW_RENDER";
-    case RETRO_ENVIRONMENT_GET_VARIABLE:                                        return "RETRO_ENVIRONMENT_GET_VARIABLE";
-    case RETRO_ENVIRONMENT_SET_VARIABLES:                                       return "RETRO_ENVIRONMENT_SET_VARIABLES";
-    case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:                                 return "RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE";
-    case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:                                 return "RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME";
-    case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:                                   return "RETRO_ENVIRONMENT_GET_LIBRETRO_PATH";
-    case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:                             return "RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK";
-    case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:                                  return "RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK";
-    case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:                                return "RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:                       return "RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES";
-    case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:                                return "RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:                                return "RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:                                   return "RETRO_ENVIRONMENT_GET_LOG_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:                                  return "RETRO_ENVIRONMENT_GET_PERF_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:                              return "RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:                               return "RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY";
-    case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:                                  return "RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY";
-    case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:                                  return "RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO";
-    case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:                           return "RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK";
-    case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:                                  return "RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO";
-    case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:                                 return "RETRO_ENVIRONMENT_SET_CONTROLLER_INFO";
-    case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:                                     return "RETRO_ENVIRONMENT_SET_MEMORY_MAPS";
-    case RETRO_ENVIRONMENT_SET_GEOMETRY:                                        return "RETRO_ENVIRONMENT_SET_GEOMETRY";
-    case RETRO_ENVIRONMENT_GET_USERNAME:                                        return "RETRO_ENVIRONMENT_GET_USERNAME";
-    case RETRO_ENVIRONMENT_GET_LANGUAGE:                                        return "RETRO_ENVIRONMENT_GET_LANGUAGE";
-    case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER:                    return "RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER";
-    case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE:                             return "RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE";
-    case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:                            return "RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS";
-    case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE:         return "RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE";
-    case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS:                            return "RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS";
-    case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:                               return "RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT";
-    case RETRO_ENVIRONMENT_GET_VFS_INTERFACE:                                   return "RETRO_ENVIRONMENT_GET_VFS_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_LED_INTERFACE:                                   return "RETRO_ENVIRONMENT_GET_LED_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE:                              return "RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE";
-    case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE:                                  return "RETRO_ENVIRONMENT_GET_MIDI_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_FASTFORWARDING:                                  return "RETRO_ENVIRONMENT_GET_FASTFORWARDING";
-    case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:                             return "RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE";
-    case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS:                                  return "RETRO_ENVIRONMENT_GET_INPUT_BITMASKS";
-    case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION:                            return "RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:                                    return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:                               return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY:                            return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY";
-    case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER:                             return "RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER";
-    case RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION:                  return "RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION";
-    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE:                      return "RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:                       return "RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION";
-    case RETRO_ENVIRONMENT_SET_MESSAGE_EXT:                                     return "RETRO_ENVIRONMENT_SET_MESSAGE_EXT";
-    case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS:                                 return "RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS";
-    case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK:                    return "RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK";
-    case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:                           return "RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY";
-    case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE:                         return "RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE";
-    case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:                           return "RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE";
-    case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:                                   return "RETRO_ENVIRONMENT_GET_GAME_INFO_EXT";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2:                                 return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL:                            return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL";
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK:            return "RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK";
-    case RETRO_ENVIRONMENT_SET_VARIABLE:                                        return "RETRO_ENVIRONMENT_SET_VARIABLE";
-    case RETRO_ENVIRONMENT_GET_THROTTLE_STATE:                                  return "RETRO_ENVIRONMENT_GET_THROTTLE_STATE";
-    case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT:                               return "RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT";
-    case RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: return "RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT";
-    case RETRO_ENVIRONMENT_GET_JIT_CAPABLE:                                     return "RETRO_ENVIRONMENT_GET_JIT_CAPABLE";
-    case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE:                            return "RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_DEVICE_POWER:                                    return "RETRO_ENVIRONMENT_GET_DEVICE_POWER";
-    case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:                             return "RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE";
-    case RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY:                              return "RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY";
-    case RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY:                    return "RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY";
-    case RETRO_ENVIRONMENT_RETROARCH_START_BLOCK:                               return "RETRO_ENVIRONMENT_RETROARCH_START_BLOCK";
-    case RETRO_ENVIRONMENT_SET_SAVE_STATE_IN_BACKGROUND:                        return "RETRO_ENVIRONMENT_SET_SAVE_STATE_IN_BACKGROUND";
-    case RETRO_ENVIRONMENT_GET_CLEAR_ALL_THREAD_WAITS_CB:                       return "RETRO_ENVIRONMENT_GET_CLEAR_ALL_THREAD_WAITS_CB";
-    case RETRO_ENVIRONMENT_POLL_TYPE_OVERRIDE:                                  return "RETRO_ENVIRONMENT_POLL_TYPE_OVERRIDE";
+#define X(name) case name: return #name;
+        ENVIRONMENT_COMMANDS
+#undef X
     default:
         return "Unknown Environment Command: " + std::to_string(cmd);
     }
@@ -207,145 +218,88 @@ bool EnvironmentHandler::Callback(uint32_t cmd, void* data)
 
     switch (cmd)
     {
-    case RETRO_ENVIRONMENT_SET_ROTATION:                                return instance->m_video_handler->SetRotation(*static_cast<uint32_t*>(data));
-    case RETRO_ENVIRONMENT_GET_OVERSCAN:                                return instance->m_video_handler->GetOverscan(static_cast<int32_t*>(data));
-    case RETRO_ENVIRONMENT_GET_CAN_DUPE:                                return instance->m_video_handler->GetCanDupe(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_SET_MESSAGE:                                 return instance->m_message_handler->SetMessage(static_cast<const retro_message*>(data));
-    case RETRO_ENVIRONMENT_SHUTDOWN:                                    return instance->Shutdown();
-    case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:                       return instance->m_environment_handler->SetPerformanceLevel(static_cast<uint32_t*>(data));
-    case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:                        return instance->m_environment_handler->GetSystemDirectory(static_cast<const char**>(data));
-    case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:                            return instance->m_video_handler->SetPixelFormat(static_cast<const retro_pixel_format*>(data));
-    case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:                       return instance->m_input_handler->SetInputDescriptors(static_cast<const retro_input_descriptor*>(data));
-    case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:                       return instance->m_input_handler->SetKeyboardEventCallback(static_cast<const retro_keyboard_callback*>(data));
-    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:                  return instance->m_environment_handler->SetDiskControlInterface(static_cast<const retro_disk_control_callback*>(data));
-    case RETRO_ENVIRONMENT_SET_HW_RENDER:                               return instance->m_video_handler->SetHwRender(static_cast<retro_hw_render_callback*>(data));
-    case RETRO_ENVIRONMENT_GET_VARIABLE:                                return instance->m_options_handler->GetVariable(static_cast<retro_variable*>(data));
-    case RETRO_ENVIRONMENT_SET_VARIABLES:                               return instance->m_options_handler->SetVariables(static_cast<const retro_variable*>(data));
-    case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:                         return instance->m_options_handler->GetVariableUpdate(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:                         return instance->m_core->SetSupportsNoGame(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:                           return instance->m_core->GetLibretroPath(static_cast<const char**>(data));
-    case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:                     return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:                          return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:                        return instance->m_input_handler->GetRumbleInterface(static_cast<retro_rumble_interface*>(data));
-    case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:               return instance->m_input_handler->GetInputDeviceCapabilities(static_cast<uint32_t*>(data));
-    case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:                        return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:                        return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:                           return instance->m_log_handler->GetLogInterface(static_cast<retro_log_callback*>(data));
-    case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:                          return instance->m_environment_handler->GetPerfInterface(static_cast<retro_perf_callback*>(data));
-    case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:                      return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:                   return instance->m_environment_handler->GetCoreAssetsDirectory(static_cast<const char**>(data));
-    case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:                          return instance->m_environment_handler->GetSaveDirectory(static_cast<const char**>(data));
-    case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:                          return instance->m_environment_handler->SetSystemAvInfo(static_cast<const retro_system_av_info*>(data));
-    case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:                   return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:                          return instance->m_environment_handler->SetSubsystemInfo(static_cast<const retro_subsystem_info*>(data));
-    case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:                         return instance->m_input_handler->SetControllerInfo(static_cast<const retro_controller_info*>(data));
-    case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:                             return instance->m_environment_handler->SetMemoryMaps(static_cast<const retro_memory_map*>(data));
-    case RETRO_ENVIRONMENT_SET_GEOMETRY:                                return instance->m_video_handler->SetGeometry(static_cast<const retro_game_geometry*>(data));
-    case RETRO_ENVIRONMENT_GET_USERNAME:                                return instance->m_environment_handler->GetUsername(static_cast<const char**>(data));
-    case RETRO_ENVIRONMENT_GET_LANGUAGE:                                return instance->m_environment_handler->GetLanguage(static_cast<retro_language*>(data));
-    case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER:            return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE:                     return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:                    return instance->m_environment_handler->SetSupportAchievements(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS:                    return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:                       return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_VFS_INTERFACE:                           return instance->m_environment_handler->GetVfsInterface(static_cast<retro_vfs_interface_info*>(data));
-    case RETRO_ENVIRONMENT_GET_LED_INTERFACE:                           return instance->m_environment_handler->GetLedInterface(static_cast<retro_led_interface*>(data));
-    case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE:                      return instance->m_environment_handler->GetAudioVideoEnable(static_cast<retro_av_enable_flags*>(data));
-    case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE:                          return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_FASTFORWARDING:                          return instance->m_environment_handler->GetFastForwarding(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:                     return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS:                          return instance->m_input_handler->GetInputBitmasks(static_cast<bool*>(data));
-    case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION:                    return instance->m_options_handler->GetCoreOptionsVersion(static_cast<uint32_t*>(data));
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:                            return instance->m_options_handler->SetCoreOptions(static_cast<const retro_core_option_definition*>(data));
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:                       return instance->m_options_handler->SetCoreOptions(static_cast<const retro_core_options_intl*>(data));
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY:                    return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER:
-    {
-        if (!data)
-            return false;
-
-        *static_cast<retro_hw_context_type*>(data) = RETRO_HW_CONTEXT_OPENGL_CORE;
-    }
-    break;
-    case RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION:
-        *static_cast<uint32_t*>(data) = 1;
-        break;
-    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE:
-    {
-        if (!data)
-        {
-            instance->m_environment_handler->m_disk_control_ext_callback = {};
-            return true;
-        }
-
-        auto diskControlExtCallback = static_cast<const retro_disk_control_ext_callback*>(data);
-        instance->m_environment_handler->m_disk_control_ext_callback = *diskControlExtCallback;
-    }
-    break;
-    case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION: return instance->m_message_handler->GetMessageInterfaceVersion(static_cast<uint32_t*>(data));
-    case RETRO_ENVIRONMENT_SET_MESSAGE_EXT: return instance->m_message_handler->SetMessageExt(static_cast<const retro_message_ext*>(data));
-    case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK:
-    {
-        if (!data)
-        {
-            Log("[RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK] callback unregistered");
-            instance->m_audio_handler->SetAudioBufferStatusCallback(nullptr);
-            return true;
-        }
-
-        auto bufferStatusCallback = static_cast<retro_audio_buffer_status_callback*>(data);
-        if (!bufferStatusCallback->callback)
-        {
-            LogError("[RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK] provided callback is null");
-            return false;
-        }
-
-        instance->m_audio_handler->SetAudioBufferStatusCallback(bufferStatusCallback->callback);
-        Log("[RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK] callback registered");
-    }
-    case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
-    {
-        if (!data)
-            return false;
-
-        auto minimumAudioLatency = *static_cast<uint32_t*>(data);
-        Log("[RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY] Minimum audio latency hinted: " + std::to_string(minimumAudioLatency));
-    }
-    break;
-    case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2: return instance->m_options_handler->SetCoreOptionsV2(static_cast<const retro_core_options_v2*>(data));
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL: return instance->m_options_handler->SetCoreOptionsV2Intl(static_cast<const retro_core_options_v2_intl*>(data));
-    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK: return instance->m_options_handler->SetCoreOptionsUpdateDisplayCallback(static_cast<const retro_core_options_update_display_callback*>(data));
-    case RETRO_ENVIRONMENT_SET_VARIABLE: return instance->m_options_handler->SetVariable(static_cast<const retro_variable*>(data));
-    case RETRO_ENVIRONMENT_GET_THROTTLE_STATE:
-    {
-        if (!data)
-            return false;
-
-        auto throttleState = static_cast<retro_throttle_state*>(data);
-        throttleState->mode = RETRO_THROTTLE_NONE;
-        throttleState->rate = 0.0f;
-    }
-    break;
-    case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT: return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_ROTATION:                                        return instance->m_video_handler->SetRotation(*static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_GET_OVERSCAN:                                        return instance->m_video_handler->GetOverscan(static_cast<int32_t*>(data));
+    case RETRO_ENVIRONMENT_GET_CAN_DUPE:                                        return instance->m_video_handler->GetCanDupe(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_SET_MESSAGE:                                         return instance->m_message_handler->SetMessage(static_cast<const retro_message*>(data));
+    case RETRO_ENVIRONMENT_SHUTDOWN:                                            return instance->Shutdown();
+    case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:                               return instance->m_environment_handler->SetPerformanceLevel(static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:                                return instance->m_environment_handler->GetSystemDirectory(static_cast<const char**>(data));
+    case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:                                    return instance->m_video_handler->SetPixelFormat(static_cast<const retro_pixel_format*>(data));
+    case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:                               return instance->m_input_handler->SetInputDescriptors(static_cast<const retro_input_descriptor*>(data));
+    case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:                               return instance->m_input_handler->SetKeyboardEventCallback(static_cast<const retro_keyboard_callback*>(data));
+    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE:                          return instance->m_environment_handler->SetDiskControlInterface(static_cast<const retro_disk_control_callback*>(data));
+    case RETRO_ENVIRONMENT_SET_HW_RENDER:                                       return instance->m_video_handler->SetHwRender(static_cast<retro_hw_render_callback*>(data));
+    case RETRO_ENVIRONMENT_GET_VARIABLE:                                        return instance->m_options_handler->GetVariable(static_cast<retro_variable*>(data));
+    case RETRO_ENVIRONMENT_SET_VARIABLES:                                       return instance->m_options_handler->SetVariables(static_cast<const retro_variable*>(data));
+    case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE:                                 return instance->m_options_handler->GetVariableUpdate(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME:                                 return instance->m_core->SetSupportsNoGame(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:                                   return instance->m_core->GetLibretroPath(static_cast<const char**>(data));
+    case RETRO_ENVIRONMENT_SET_FRAME_TIME_CALLBACK:                             return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:                                  return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:                                return instance->m_input_handler->GetRumbleInterface(static_cast<retro_rumble_interface*>(data));
+    case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:                       return instance->m_input_handler->GetInputDeviceCapabilities(static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:                                return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:                                return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:                                   return instance->m_log_handler->GetLogInterface(static_cast<retro_log_callback*>(data));
+    case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:                                  return instance->m_environment_handler->GetPerfInterface(static_cast<retro_perf_callback*>(data));
+    case RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE:                              return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_CORE_ASSETS_DIRECTORY:                           return instance->m_environment_handler->GetCoreAssetsDirectory(static_cast<const char**>(data));
+    case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY:                                  return instance->m_environment_handler->GetSaveDirectory(static_cast<const char**>(data));
+    case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:                                  return instance->m_environment_handler->SetSystemAvInfo(static_cast<const retro_system_av_info*>(data));
+    case RETRO_ENVIRONMENT_SET_PROC_ADDRESS_CALLBACK:                           return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:                                  return instance->m_environment_handler->SetSubsystemInfo(static_cast<const retro_subsystem_info*>(data));
+    case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:                                 return instance->m_input_handler->SetControllerInfo(static_cast<const retro_controller_info*>(data));
+    case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:                                     return instance->m_environment_handler->SetMemoryMaps(static_cast<const retro_memory_map*>(data));
+    case RETRO_ENVIRONMENT_SET_GEOMETRY:                                        return instance->m_video_handler->SetGeometry(static_cast<const retro_game_geometry*>(data));
+    case RETRO_ENVIRONMENT_GET_USERNAME:                                        return instance->m_environment_handler->GetUsername(static_cast<const char**>(data));
+    case RETRO_ENVIRONMENT_GET_LANGUAGE:                                        return instance->m_environment_handler->GetLanguage(static_cast<retro_language*>(data));
+    case RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER:                    return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_HW_RENDER_INTERFACE:                             return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:                            return instance->m_environment_handler->SetSupportAchievements(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE:         return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS:                            return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:                               return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_VFS_INTERFACE:                                   return instance->m_environment_handler->GetVfsInterface(static_cast<retro_vfs_interface_info*>(data));
+    case RETRO_ENVIRONMENT_GET_LED_INTERFACE:                                   return instance->m_environment_handler->GetLedInterface(static_cast<retro_led_interface*>(data));
+    case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE:                              return instance->m_environment_handler->GetAudioVideoEnable(static_cast<retro_av_enable_flags*>(data));
+    case RETRO_ENVIRONMENT_GET_MIDI_INTERFACE:                                  return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_FASTFORWARDING:                                  return instance->m_environment_handler->GetFastForwarding(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_GET_TARGET_REFRESH_RATE:                             return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_INPUT_BITMASKS:                                  return instance->m_input_handler->GetInputBitmasks(static_cast<bool*>(data));
+    case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION:                            return instance->m_options_handler->GetCoreOptionsVersion(static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS:                                    return instance->m_options_handler->SetCoreOptions(static_cast<const retro_core_option_definition*>(data));
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL:                               return instance->m_options_handler->SetCoreOptions(static_cast<const retro_core_options_intl*>(data));
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_DISPLAY:                            return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER:                             return instance->m_video_handler->GetPreferredHwRender(static_cast<retro_hw_context_type*>(data));
+    case RETRO_ENVIRONMENT_GET_DISK_CONTROL_INTERFACE_VERSION:                  return instance->m_environment_handler->GetDiskControlInterfaceVersion(static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_SET_DISK_CONTROL_EXT_INTERFACE:                      return instance->m_environment_handler->SetDiskControlExtInterface(static_cast<const retro_disk_control_ext_callback*>(data));
+    case RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION:                       return instance->m_message_handler->GetMessageInterfaceVersion(static_cast<uint32_t*>(data));
+    case RETRO_ENVIRONMENT_SET_MESSAGE_EXT:                                     return instance->m_message_handler->SetMessageExt(static_cast<const retro_message_ext*>(data));
+    case RETRO_ENVIRONMENT_GET_INPUT_MAX_USERS:                                 return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_AUDIO_BUFFER_STATUS_CALLBACK:                    return instance->m_audio_handler->SetAudioBufferStatusCallback(static_cast<const retro_audio_buffer_status_callback*>(data));
+    case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:                           return instance->m_audio_handler->SetMinimumAudioLatency(static_cast<const uint32_t*>(data));
+    case RETRO_ENVIRONMENT_SET_FASTFORWARDING_OVERRIDE:                         return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:                           return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_GAME_INFO_EXT:                                   return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2:                                 return instance->m_options_handler->SetCoreOptionsV2(static_cast<const retro_core_options_v2*>(data));
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_V2_INTL:                            return instance->m_options_handler->SetCoreOptionsV2Intl(static_cast<const retro_core_options_v2_intl*>(data));
+    case RETRO_ENVIRONMENT_SET_CORE_OPTIONS_UPDATE_DISPLAY_CALLBACK:            return instance->m_options_handler->SetCoreOptionsUpdateDisplayCallback(static_cast<const retro_core_options_update_display_callback*>(data));
+    case RETRO_ENVIRONMENT_SET_VARIABLE:                                        return instance->m_options_handler->SetVariable(static_cast<const retro_variable*>(data));
+    case RETRO_ENVIRONMENT_GET_THROTTLE_STATE:                                  return instance->m_environment_handler->GetThrottleState(static_cast<retro_throttle_state*>(data));
+    case RETRO_ENVIRONMENT_GET_SAVESTATE_CONTEXT:                               return EnvironmentNotImplemented(cmd);
     case RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_JIT_CAPABLE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_DEVICE_POWER: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY: return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_JIT_CAPABLE:                                     return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_MICROPHONE_INTERFACE:                            return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_DEVICE_POWER:                                    return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE:                             return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_PLAYLIST_DIRECTORY:                              return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY:                    return EnvironmentNotImplemented(cmd);
     // custom environment commands
-    case RETRO_ENVIRONMENT_SET_SAVE_STATE_IN_BACKGROUND: return EnvironmentNotImplemented(cmd);
-    case RETRO_ENVIRONMENT_GET_CLEAR_ALL_THREAD_WAITS_CB:
-        *static_cast<retro_environment_t*>(data) = runloop_clear_all_thread_waits;
-        break;
-    case RETRO_ENVIRONMENT_POLL_TYPE_OVERRIDE: return EnvironmentNotImplemented(cmd);
-    default: return EnvironmentUnknown(cmd);
+    case RETRO_ENVIRONMENT_SET_SAVE_STATE_IN_BACKGROUND:                        return EnvironmentNotImplemented(cmd);
+    case RETRO_ENVIRONMENT_GET_CLEAR_ALL_THREAD_WAITS_CB:                       return instance->m_environment_handler->GetClearAllThreadWaitsCb(static_cast<retro_environment_t*>(data));
+    case RETRO_ENVIRONMENT_POLL_TYPE_OVERRIDE:                                  return EnvironmentNotImplemented(cmd);
+    default:                                                                    return EnvironmentUnknown(cmd);
     }
 
     return true;
@@ -502,15 +456,12 @@ bool EnvironmentHandler::SetSubsystemInfo(const retro_subsystem_info* subsystem_
 
 bool EnvironmentHandler::SetMemoryMaps(const retro_memory_map* memory_maps)
 {
-    if (!memory_maps)
-        return true;
-
-    for (size_t i = 0; i < memory_maps->num_descriptors; ++i)
-    {
-        const retro_memory_descriptor& descriptor = memory_maps->descriptors[i];
-        //Log("Memory Descriptor: flags = " + std::to_string(descriptor.flags));
-    }
-
+    if (memory_maps)
+        for (size_t i = 0; i < memory_maps->num_descriptors; ++i)
+        {
+            const retro_memory_descriptor& descriptor = memory_maps->descriptors[i];
+            //Log("Memory Descriptor: flags = " + std::to_string(descriptor.flags));
+        }
     return true;
 }
 
@@ -518,7 +469,6 @@ bool EnvironmentHandler::GetUsername(const char** username) const
 {
     if (username)
         *username = Wrapper::GetInstance()->m_username.c_str();
-
     return true;
 }
 
@@ -560,19 +510,15 @@ bool EnvironmentHandler::GetVfsInterface(retro_vfs_interface_info* vfs_interface
 
 bool EnvironmentHandler::GetLedInterface(retro_led_interface* led_interface)
 {
-    if (!led_interface)
-        return true;
-
-    led_interface->set_led_state = Wrapper::GetInstance()->LedInterfaceSetLedState;
+    if (led_interface)
+        led_interface->set_led_state = Wrapper::GetInstance()->LedInterfaceSetLedState;
     return true;
 }
 
 bool EnvironmentHandler::GetAudioVideoEnable(retro_av_enable_flags* audio_video_enable)
 {
-    if (!audio_video_enable)
-        return true;
-
-    *audio_video_enable = static_cast<retro_av_enable_flags>(RETRO_AV_ENABLE_AUDIO | RETRO_AV_ENABLE_VIDEO);
+    if (audio_video_enable)
+        *audio_video_enable = static_cast<retro_av_enable_flags>(RETRO_AV_ENABLE_AUDIO | RETRO_AV_ENABLE_VIDEO);
     return true;
 }
 
@@ -580,6 +526,43 @@ bool EnvironmentHandler::GetFastForwarding(bool* fast_forwarding)
 {
     if (fast_forwarding)
         *fast_forwarding = false;
+    return true;
+}
+
+bool EnvironmentHandler::GetDiskControlInterfaceVersion(uint32_t* version)
+{
+    if (version)
+        *version = 1;
+    return true;
+}
+
+bool EnvironmentHandler::SetDiskControlExtInterface(const retro_disk_control_ext_callback* callback)
+{
+    if (!callback)
+    {
+        m_disk_control_ext_callback = {};
+        return true;
+    }
+
+    m_disk_control_ext_callback = *callback;
+    return true;
+}
+
+bool EnvironmentHandler::GetThrottleState(retro_throttle_state* state)
+{
+    if (state)
+    {
+        state->mode = RETRO_THROTTLE_NONE;
+        state->rate = 0.0f;
+    }
+
+    return true;
+}
+
+bool EnvironmentHandler::GetClearAllThreadWaitsCb(retro_environment_t* env)
+{
+    if (env)
+        *env = runloop_clear_all_thread_waits;
     return true;
 }
 }

@@ -309,6 +309,15 @@ bool VideoHandler::SetHwRender(retro_hw_render_callback* hw_render_callback)
     return true;
 }
 
+bool VideoHandler::GetPreferredHwRender(retro_hw_context_type* hw_context_type) const
+{
+    if (!hw_context_type)
+        return false;
+
+    *hw_context_type = RETRO_HW_CONTEXT_OPENGL;
+    return true;
+}
+
 void VideoHandler::CreateTexture(int32_t width, int32_t height, Image::Format image_format, PackedByteArray pixel_data, bool flip_y)
 {
     m_image.instantiate();

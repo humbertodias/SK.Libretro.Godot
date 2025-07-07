@@ -47,5 +47,9 @@ private:
     bool GetLedInterface(retro_led_interface* led_interface);
     bool GetAudioVideoEnable(retro_av_enable_flags* flags);
     bool GetFastForwarding(bool* fast_forwarding);
+    bool GetDiskControlInterfaceVersion(uint32_t* version);
+    bool SetDiskControlExtInterface(const retro_disk_control_ext_callback* callback);
+    bool GetThrottleState(retro_throttle_state* state);
+    bool GetClearAllThreadWaitsCb(retro_environment_t* env);
 };
 }

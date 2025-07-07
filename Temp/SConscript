@@ -17,10 +17,7 @@ env.Append(CPPPATH=[
 
 env.Append(LIBPATH=[r"SKLibretro/external/SDL3/lib/x64"])
 
-env.Append(LIBS=["user32"])
-env.Append(LIBS=["gdi32"])
-env.Append(LIBS=["opengl32"])
-env.Append(LIBS=["SDL3"])
+env.Append(LIBS=["user32", "gdi32", "opengl32", "SDL3"])
 
 env.Append(LINKFLAGS=['/IGNORE:4099'])
 

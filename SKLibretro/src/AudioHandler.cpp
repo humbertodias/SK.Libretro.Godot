@@ -101,9 +101,17 @@ void AudioHandler::DeInit()
         m_audio_stream_generator.unref();
 }
 
-void AudioHandler::SetAudioBufferStatusCallback(retro_audio_buffer_status_callback_t callback)
+bool AudioHandler::SetAudioBufferStatusCallback(const retro_audio_buffer_status_callback* callback)
 {
-    m_audio_buffer_status_callback = callback;
+    m_audio_buffer_status_callback = callback ? callback->callback : nullptr;
+    return true;
+}
+
+bool AudioHandler::SetMinimumAudioLatency(const uint32_t* minimum_audio_latency)
+{
+    if (minimum_audio_latency)
+        m_minimum_audio_latency = *minimum_audio_latency;
+    return true;
 }
 
 void AudioHandler::CallAudioBufferStatusCallback()
