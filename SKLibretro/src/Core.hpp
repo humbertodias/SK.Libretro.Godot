@@ -21,6 +21,7 @@ public:
     bool Load();
     void Unload();
 
+    const std::string& GetName() const;
     bool GetSupportsNoGame() const;
 
     decltype(&::retro_set_environment) retro_set_environment                       = nullptr;
@@ -61,12 +62,12 @@ private:
     bool LoadHandle();
 
     template<typename T>
-    bool LoadFunction_(T& functionPtr, const std::string& functionName)
+    bool LoadFunction_(T& function_ptr, const std::string& function_name)
     {
-        functionPtr = reinterpret_cast<T>(SDL_LoadFunction(static_cast<SDL_SharedObject*>(m_handle), functionName.c_str()));
-        if (!functionPtr)
+        function_ptr = reinterpret_cast<T>(SDL_LoadFunction(static_cast<SDL_SharedObject*>(m_handle), function_name.c_str()));
+        if (!function_ptr)
         {
-            LogError("Failed to load function: " + functionName);
+            LogError("Failed to load function: " + function_name);
             return false;
         }
         return true;

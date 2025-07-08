@@ -125,6 +125,11 @@ void Core::Unload()
             LogError("Core file not found for removal: " + m_path);
 }
 
+const std::string& Core::GetName() const
+{
+    return m_name;
+}
+
 bool Core::GetSupportsNoGame() const
 {
     return m_supports_no_game;

@@ -15,6 +15,8 @@ env.Append(CPPPATH=[
     "SKLibretro/external/SDL3/include/"
 ])
 
+env.Append(CXXFLAGS=["/std:c++latest"])
+
 env.Append(LIBPATH=[r"SKLibretro/external/SDL3/lib/x64"])
 
 env.Append(LIBS=["user32", "gdi32", "opengl32", "SDL3"])

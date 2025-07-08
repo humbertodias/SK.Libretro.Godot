@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 #include <libretro.h>
 
@@ -24,9 +24,12 @@ public:
 
 private:
     static const uint32_t SUPPORTED_CORE_OPTIONS_VERSION = 2;
-    
+
     std::unordered_map<std::string, std::string> m_variables = {};
     bool m_variable_update = false;
     retro_core_options_update_display_callback_t m_core_options_update_display_callback = nullptr;
+
+    void SerializeToFile();
+    void DeserializeFromFile();
 };
 }

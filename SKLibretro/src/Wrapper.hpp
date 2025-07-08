@@ -48,7 +48,8 @@ public:
 
     godot::MeshInstance3D* m_node;
 
-    std::string GetTempDirectory() const { return m_temp_directory; }
+    const std::string& GetRootDirectory() const { return m_root_directory; }
+    const std::string& GetTempDirectory() const { return m_temp_directory; }
 
     std::unique_ptr<Core> m_core = nullptr;
     std::unique_ptr<EnvironmentHandler> m_environment_handler = nullptr;
