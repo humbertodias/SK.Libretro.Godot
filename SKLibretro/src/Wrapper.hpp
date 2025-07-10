@@ -43,6 +43,9 @@ public:
     void StartContent(godot::MeshInstance3D* node, godot::String root_directory, godot::String core_name, godot::String game_path);
     void StopContent();
 
+    const std::unordered_map<std::string, OptionCategory>& GetOptionCategories() const { return m_options_handler->GetCategories(); }
+    const std::unordered_map<std::string, OptionDefinition>& GetOptionDefinitions() const { return m_options_handler->GetDefinitions(); }
+
     void _input(const godot::Ref<godot::InputEvent>& event);
     void _process(double delta);
 

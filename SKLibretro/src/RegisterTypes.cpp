@@ -12,7 +12,10 @@ void initialize(ModuleInitializationLevel p_level)
     if (p_level != ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE)
         return;
 
-    GDREGISTER_RUNTIME_CLASS(SK::Libretro);
+    ClassDB::register_class<SK::LibretroOptionCategory>();
+    ClassDB::register_class<SK::LibretroOptionValue>();
+    ClassDB::register_class<SK::LibretroOptionDefinition>();
+    ClassDB::register_runtime_class<SK::Libretro>();
 }
 
 void uninitialize(ModuleInitializationLevel p_level)

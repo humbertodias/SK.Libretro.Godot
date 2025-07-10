@@ -331,9 +331,11 @@ bool EnvironmentHandler::GetSystemDirectory(const char** directory)
 
     if (!std::filesystem::is_directory(m_system_directory))
     {
-        if (!std::filesystem::create_directories(m_system_directory))
+        std::error_code ec;
+        std::filesystem::create_directories(m_system_directory, ec);
+        if (ec)
         {
-            LogError("Failed to create system directory: " + m_system_directory);
+            LogError("Failed to create system directory: " + m_system_directory + " - " + ec.message());
             return false;
         }
     }
@@ -352,9 +354,11 @@ bool EnvironmentHandler::GetSaveDirectory(const char** directory)
 
     if (!std::filesystem::is_directory(m_save_directory))
     {
-        if (!std::filesystem::create_directories(m_save_directory))
+        std::error_code ec;
+        std::filesystem::create_directories(m_save_directory, ec);
+        if (ec)
         {
-            LogError("Failed to create save directory: " + m_save_directory);
+            LogError("Failed to create save directory: " + m_save_directory + " - " + ec.message());
             return false;
         }
     }
@@ -373,9 +377,11 @@ bool EnvironmentHandler::GetCoreAssetsDirectory(const char** directory)
 
     if (!std::filesystem::is_directory(m_core_assets_directory))
     {
-        if (!std::filesystem::create_directories(m_core_assets_directory))
+        std::error_code ec;
+        std::filesystem::create_directories(m_core_assets_directory, ec);
+        if (ec)
         {
-            LogError("Failed to create core assets directory: " + m_core_assets_directory);
+            LogError("Failed to create core assets directory: " + m_core_assets_directory + " - " + ec.message());
             return false;
         }
     }
@@ -433,22 +439,22 @@ bool EnvironmentHandler::SetSubsystemInfo(const retro_subsystem_info* subsystem_
     // auto subsystemInfo = static_cast<const retro_subsystem_info*>(data);
     // for (int i = 0; subsystemInfo[i].desc; ++i)
     // {
-    //     Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] desc: " + String(subsystemInfo[i].desc));
-    //     Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] ident: " + String(subsystemInfo[i].ident));
+    //     Log("desc: " + String(subsystemInfo[i].desc));
+    //     Log("ident: " + String(subsystemInfo[i].ident));
     //     for (int j = 0; j < subsystemInfo[i].num_roms; ++j)
     //     {
-    //         Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom desc: " + String(subsystemInfo[i].roms[j].desc));
-    //         Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom valid_extensions: " + String(subsystemInfo[i].roms[j].valid_extensions));
-    //         Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom need_fullpath: " + String::num_int64(subsystemInfo[i].roms[j].need_fullpath));
-    //         Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom block_extract: " + String::num_int64(subsystemInfo[i].roms[j].block_extract));
-    //         Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom required: " + String::num_int64(subsystemInfo[i].roms[j].required));
+    //         Log("rom desc: " + String(subsystemInfo[i].roms[j].desc));
+    //         Log("rom valid_extensions: " + String(subsystemInfo[i].roms[j].valid_extensions));
+    //         Log("rom need_fullpath: " + String::num_int64(subsystemInfo[i].roms[j].need_fullpath));
+    //         Log("rom block_extract: " + String::num_int64(subsystemInfo[i].roms[j].block_extract));
+    //         Log("rom required: " + String::num_int64(subsystemInfo[i].roms[j].required));
     //         for (size_t k = 0; k < subsystemInfo[i].roms[j].num_memory; ++k)
     //         {
-    //             Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom memory extension: " + String(subsystemInfo[i].roms[j].memory[k].extension));
-    //             Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] rom memory type: " + String::num_int64(subsystemInfo[i].roms[j].memory[k].type));
+    //             Log("rom memory extension: " + String(subsystemInfo[i].roms[j].memory[k].extension));
+    //             Log("rom memory type: " + String::num_int64(subsystemInfo[i].roms[j].memory[k].type));
     //         }
     //     }
-    //     Log("[RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO] id: " + String::num_int64(subsystemInfo[i].id));
+    //     Log("id: " + String::num_int64(subsystemInfo[i].id));
     // }
 
     return false;

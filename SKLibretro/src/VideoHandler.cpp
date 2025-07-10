@@ -276,7 +276,7 @@ bool VideoHandler::SetGeometry(const retro_game_geometry* geometry)
     if (!geometry)
         return true;
 
-    Log("[RETRO_ENVIRONMENT_SET_GEOMETRY] " + std::to_string(geometry->base_width) + "x" + std::to_string(geometry->base_height) +
+    Log(std::to_string(geometry->base_width) + "x" + std::to_string(geometry->base_height) +
         " @ " + std::to_string(geometry->max_width) + "x" + std::to_string(geometry->max_height) +
         " (aspect ratio: " + std::to_string(geometry->aspect_ratio) + ")");
 

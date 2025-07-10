@@ -108,14 +108,34 @@ bool OptionsHandler::SetCoreOptions(const retro_core_options_intl* options_intl)
 
 bool OptionsHandler::SetCoreOptionsV2(const retro_core_options_v2* options)
 {
+    m_categories.clear();
     m_variables.clear();
 
     if (!options)
         return true;
 
+    if (options->categories)
+        for (auto category = options->categories; category->key; ++category)
+            m_categories.emplace(category->key, OptionCategory{ category->desc, category->info });
+
     for (auto definition = options->definitions; definition->key; ++definition)
+    {
+        std::vector<OptionValue> option_definition_values;
+        for (auto option_definition_value = definition->values; option_definition_value->value; ++option_definition_value)
+            option_definition_values.emplace_back(option_definition_value->value ? option_definition_value->value : "",
+                                                  option_definition_value->label ? option_definition_value->label : "");
+
+        m_definitions.emplace(definition->key, OptionDefinition{ definition->desc             ? definition->desc : "",
+                                                                 definition->desc_categorized ? definition->desc_categorized : "",
+                                                                 definition->info             ? definition->info : "",
+                                                                 definition->info_categorized ? definition->info_categorized : "",
+                                                                 definition->category_key     ? definition->category_key : "",
+                                                                 std::move(option_definition_values),
+                                                                 definition->default_value    ? definition->default_value : "" });
+
         if (definition->key && definition->default_value)
             m_variables[definition->key] = definition->default_value;
+    }
 
     DeserializeFromFile();
 
@@ -143,13 +163,17 @@ void OptionsHandler::SerializeToFile()
     const auto& core_name = Wrapper::GetInstance()->m_core->GetName();
     std::filesystem::path file_path = std::filesystem::path(root_directory) / "core_options" / (core_name + ".opt");
     
-    if (!std::filesystem::exists(file_path))
+    if (!std::filesystem::is_regular_file(file_path))
     {
-        std::error_code ec;
-        if (!std::filesystem::create_directories(file_path.parent_path(), ec))
+        if (!std::filesystem::is_directory(file_path.parent_path()))
         {
-            LogError(ec.message());
-            return;
+            std::error_code ec;
+            std::filesystem::create_directories(file_path.parent_path(), ec);
+            if (ec)
+            {
+                LogError(ec.message());
+                return;
+            }
         }
     }
 
@@ -170,7 +194,7 @@ void OptionsHandler::DeserializeFromFile()
     const auto& core_name = Wrapper::GetInstance()->m_core->GetName();
     std::filesystem::path file_path = std::filesystem::path(root_directory) / "core_options" / (core_name + ".opt");
 
-    if (!std::filesystem::exists(file_path))
+    if (!std::filesystem::is_regular_file(file_path))
     {
         SerializeToFile();
         return;

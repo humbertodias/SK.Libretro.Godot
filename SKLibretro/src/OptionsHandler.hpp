@@ -1,12 +1,36 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 
 #include <libretro.h>
 
 namespace SK
 {
+struct OptionCategory
+{
+    std::string desc;
+    std::string info;
+};
+
+struct OptionValue
+{
+    std::string value;
+    std::string label;
+};
+
+struct OptionDefinition
+{
+    std::string desc;
+    std::string desc_categorized;
+    std::string info;
+    std::string info_categorized;
+    std::string category_key;
+    std::vector<OptionValue> values;
+    std::string default_value;
+};
+
 class OptionsHandler
 {
 public:
@@ -22,8 +46,14 @@ public:
     bool SetCoreOptionsV2Intl(const retro_core_options_v2_intl* options);
     bool SetCoreOptionsUpdateDisplayCallback(const retro_core_options_update_display_callback* callback);
 
+    const std::unordered_map<std::string, OptionCategory>& GetCategories() const { return m_categories; }
+    const std::unordered_map<std::string, OptionDefinition>& GetDefinitions() const { return m_definitions; }
+
 private:
     static const uint32_t SUPPORTED_CORE_OPTIONS_VERSION = 2;
+
+    std::unordered_map<std::string, OptionCategory> m_categories = {};
+    std::unordered_map<std::string, OptionDefinition> m_definitions = {};
 
     std::unordered_map<std::string, std::string> m_variables = {};
     bool m_variable_update = false;

@@ -14,6 +14,7 @@
 #include <fstream>
 #include <chrono>
 
+#include "Libretro.hpp"
 #include "Debug.hpp"
 #include "ThreadCommandInitAudio.hpp"
 #include "ThreadCommandCreateTexture.hpp"
@@ -316,8 +317,16 @@ void Wrapper::StartContent(MeshInstance3D* node, String root_directory, String c
     std::string core_assets_directory = root_directory.path_join("core_assets").path_join(core_name).utf8().get_data();
     m_environment_handler->SetDirectories(system_directory, save_directory, core_assets_directory);
 
-    if (!std::filesystem::exists(m_temp_directory))
-        std::filesystem::create_directories(m_temp_directory);
+    if (!std::filesystem::is_directory(m_temp_directory))
+    {
+        std::error_code ec;
+        std::filesystem::create_directories(m_temp_directory, ec);
+        if (ec)
+        {
+            LogError("Failed to create temp directory: " + m_temp_directory + " - " + ec.message());
+            return;
+        }
+    }
 
     m_thread = std::thread(&Wrapper::EmulationThreadLoop, this);
 }
@@ -633,6 +642,8 @@ void Wrapper::EmulationThreadLoop()
     double frame_duration_ms = 1000.0 / systemAvInfo.timing.fps;
     auto last_time = std::chrono::steady_clock::now();
     double accumulator = 0.0;
+
+    Libretro::NotifyOptionsReady();
 
     while (m_running)
     {
