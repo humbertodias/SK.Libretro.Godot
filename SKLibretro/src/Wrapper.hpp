@@ -40,11 +40,13 @@ public:
 
     static Wrapper* GetInstance();
 
-    void StartContent(godot::MeshInstance3D* node, godot::String root_directory, godot::String core_name, godot::String game_path);
+    void StartContent(godot::MeshInstance3D* node, const std::string& root_directory, const std::string& core_name, const std::string& game_path);
     void StopContent();
 
     const std::unordered_map<std::string, OptionCategory>& GetOptionCategories() const { return m_options_handler->GetCategories(); }
     const std::unordered_map<std::string, OptionDefinition>& GetOptionDefinitions() const { return m_options_handler->GetDefinitions(); }
+    const std::unordered_map<std::string, std::string>& GetOptionValues() const { return m_options_handler->GetValues(); }
+    void SetCoreOption(const std::string& key, const std::string& value);
 
     void _input(const godot::Ref<godot::InputEvent>& event);
     void _process(double delta);

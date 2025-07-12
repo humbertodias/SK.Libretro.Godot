@@ -48,6 +48,8 @@ public:
 
     const std::unordered_map<std::string, OptionCategory>& GetCategories() const { return m_categories; }
     const std::unordered_map<std::string, OptionDefinition>& GetDefinitions() const { return m_definitions; }
+    const std::unordered_map<std::string, std::string>& GetValues() const { return m_variables; }
+    void SetVariable(const std::string& key, const std::string& value);
 
 private:
     static const uint32_t SUPPORTED_CORE_OPTIONS_VERSION = 2;

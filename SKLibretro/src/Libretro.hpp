@@ -101,8 +101,7 @@ public:
     static void StartContent(godot::MeshInstance3D* node, godot::String root_directory, godot::String core_name, godot::String game_path);
     static void StopContent();
 
-    static godot::Dictionary GetOptionCategories();
-    static godot::Dictionary GetOptionDefinitions();
+    static void SetCoreOption(const godot::String& key, const godot::String& value);
 
     void _exit_tree();
     void _input(const godot::Ref<godot::InputEvent>& event);
@@ -114,6 +113,9 @@ private:
     static Libretro* m_instance;
 
     static void NotifyOptionsReady();
+    godot::Dictionary GetOptionCategories();
+    godot::Dictionary GetOptionDefinitions();
+    godot::Dictionary GetOptionValues();
 
     static void _bind_methods();
 };

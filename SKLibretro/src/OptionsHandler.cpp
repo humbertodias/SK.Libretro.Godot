@@ -157,6 +157,18 @@ bool OptionsHandler::SetCoreOptionsUpdateDisplayCallback(const retro_core_option
     return true;
 }
 
+void OptionsHandler::SetVariable(const std::string& key, const std::string& value)
+{
+    if (key.empty() || value.empty() || !m_variables.contains(key))
+        return;
+
+    m_variables[key] = value;
+    m_variable_update = true;
+
+    SetVariableUpdate(true);
+    SerializeToFile();
+}
+
 void OptionsHandler::SerializeToFile()
 {
     const auto& root_directory = Wrapper::GetInstance()->GetRootDirectory();

@@ -28,12 +28,46 @@ void Libretro::ConnectOptionsReady(const godot::Callable& callable, uint32_t fla
 
 void Libretro::StartContent(MeshInstance3D* node, String root_directory, String core_name, String game_path)
 {
-    Wrapper::GetInstance()->StartContent(node, root_directory, core_name, game_path);
+    Wrapper::GetInstance()->StartContent(node, root_directory.utf8().get_data(), core_name.utf8().get_data(), game_path.utf8().get_data());
 }
 
 void Libretro::StopContent()
 {
     Wrapper::GetInstance()->StopContent();
+}
+
+void Libretro::SetCoreOption(const godot::String& key, const godot::String& value)
+{
+    Wrapper::GetInstance()->SetCoreOption(key.utf8().get_data(), value.utf8().get_data());
+}
+
+void Libretro::_exit_tree()
+{
+    StopContent();
+
+    if (m_instance == this)
+        m_instance = nullptr;
+}
+
+void Libretro::_input(const Ref<InputEvent>& event)
+{
+    Wrapper::GetInstance()->_input(event);
+}
+
+void Libretro::_process(double delta)
+{
+    Wrapper::GetInstance()->_process(delta);
+}
+
+void Libretro::NotifyOptionsReady()
+{
+    if (!m_instance)
+        return;
+
+    auto categories     = m_instance->GetOptionCategories();
+    auto definitions    = m_instance->GetOptionDefinitions();
+    auto current_values = m_instance->GetOptionValues();
+    m_instance->call_deferred("emit_signal", "options_ready", categories, definitions, current_values);
 }
 
 Dictionary Libretro::GetOptionCategories()
@@ -76,28 +110,13 @@ Dictionary Libretro::GetOptionDefinitions()
     return result;
 }
 
-void Libretro::_exit_tree()
+Dictionary Libretro::GetOptionValues()
 {
-    StopContent();
-
-    if (m_instance == this)
-        m_instance = nullptr;
-}
-
-void Libretro::_input(const Ref<InputEvent>& event)
-{
-    Wrapper::GetInstance()->_input(event);
-}
-
-void Libretro::_process(double delta)
-{
-    Wrapper::GetInstance()->_process(delta);
-}
-
-void Libretro::NotifyOptionsReady()
-{
-    if (m_instance)    
-        m_instance->call_deferred("emit_signal", "options_ready");
+    Dictionary result;
+    const auto& values = Wrapper::GetInstance()->GetOptionValues();
+    for (const auto& [key, value] : values)
+        result[String(key.c_str())] = String(value.c_str());
+    return result;
 }
 
 void Libretro::_bind_methods()
@@ -105,9 +124,8 @@ void Libretro::_bind_methods()
     ClassDB::bind_static_method("Libretro", D_METHOD("ConnectOptionsReady", "callable", "flags"), &ConnectOptionsReady, DEFVAL(0u));
     ClassDB::bind_static_method("Libretro", D_METHOD("StartContent", "node", "root_directory", "core_name", "game_path"), &StartContent);
     ClassDB::bind_static_method("Libretro", D_METHOD("StopContent"), &StopContent);
-    ClassDB::bind_static_method("Libretro", D_METHOD("GetOptionCategories"), &GetOptionCategories);
-    ClassDB::bind_static_method("Libretro", D_METHOD("GetOptionDefinitions"), &GetOptionDefinitions);
+    ClassDB::bind_static_method("Libretro", D_METHOD("SetCoreOption"), &SetCoreOption);
 
-    ADD_SIGNAL(MethodInfo("options_ready"));
+    ADD_SIGNAL(MethodInfo("options_ready", PropertyInfo(Variant::DICTIONARY, "categories"), PropertyInfo(Variant::DICTIONARY, "definitions"), PropertyInfo(Variant::DICTIONARY, "current_values")));
 }
 }

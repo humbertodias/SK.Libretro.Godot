@@ -283,7 +283,7 @@ static int16_t ToShort(float floatValue, int mul = 1)
     return static_cast<int16_t>(Math::clamp(Math::round(floatValue), static_cast<float>(INT16_MIN), static_cast<float>(INT16_MAX)) * mul);
 }
 
-void Wrapper::StartContent(MeshInstance3D* node, String root_directory, String core_name, String game_path)
+void Wrapper::StartContent(MeshInstance3D* node, const std::string& root_directory, const std::string& core_name, const std::string& game_path)
 {
     if (!node)
         return;
@@ -296,9 +296,9 @@ void Wrapper::StartContent(MeshInstance3D* node, String root_directory, String c
     audio_stream_player->set_name("AudioStreamPlayer");
     m_node->add_child(audio_stream_player);
 
-    String core_path = root_directory.path_join("cores").path_join(core_name + "_libretro.dll");
+    std::filesystem::path core_path = std::filesystem::path(root_directory).append("cores").append(core_name + "_libretro").replace_extension(".dll");
 
-    m_core = std::make_unique<Core>(core_path.utf8().get_data());
+    m_core = std::make_unique<Core>(core_path.string());
     m_environment_handler = std::make_unique<EnvironmentHandler>();
     m_video_handler = std::make_unique<VideoHandler>();
     m_audio_handler = std::make_unique<AudioHandler>();
@@ -309,12 +309,12 @@ void Wrapper::StartContent(MeshInstance3D* node, String root_directory, String c
 
     m_video_handler->Init(node);
 
-    m_root_directory = root_directory.utf8().get_data();
-    m_temp_directory = root_directory.path_join("temp").utf8().get_data();
-    m_game_path = game_path.utf8().get_data();
-    std::string system_directory = root_directory.path_join("system").path_join(core_name).utf8().get_data();
-    std::string save_directory = root_directory.path_join("save").path_join(core_name).utf8().get_data();
-    std::string core_assets_directory = root_directory.path_join("core_assets").path_join(core_name).utf8().get_data();
+    m_root_directory = root_directory;
+    m_temp_directory = std::filesystem::path(root_directory).append("temp").string();
+    m_game_path = game_path;
+    std::string system_directory = std::filesystem::path(root_directory).append("system").append(core_name).string();
+    std::string save_directory = std::filesystem::path(root_directory).append("save").append(core_name).string();
+    std::string core_assets_directory = std::filesystem::path(root_directory).append("core_assets").append(core_name).string();
     m_environment_handler->SetDirectories(system_directory, save_directory, core_assets_directory);
 
     if (!std::filesystem::is_directory(m_temp_directory))
@@ -334,6 +334,12 @@ void Wrapper::StartContent(MeshInstance3D* node, String root_directory, String c
 void Wrapper::StopContent()
 {
     StopEmulationThread();
+}
+
+void Wrapper::SetCoreOption(const std::string& key, const std::string& value)
+{
+    if (m_options_handler)
+        m_options_handler->SetVariable(key, value);
 }
 
 void Wrapper::_input(const godot::Ref<godot::InputEvent>& event)
